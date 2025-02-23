@@ -19,14 +19,16 @@ func startRepl() {
 
 		inputCmd := words[0]
 
-		command, err := getCommand(inputCmd)
-		if err != nil {
-			fmt.Println(err)
+		command, exists := getCommands()[inputCmd]
+		if !exists {
+			fmt.Println("Unknown command")
+			continue
 		} else {
 			err := command.callback()
 			if err != nil {
 				fmt.Println("Error executing command %s: %s", command, err)
 			}
+			continue
 		}
 	}
 }
@@ -43,22 +45,17 @@ type cliCommand struct {
 	callback    func() error
 }
 
-func getCommand(cmd string) (cliCommand, error) {
-	availableCommands := map[string]cliCommand{
-		"exit": {
-			name:        "exit",
-			description: "Exit the Pokedex",
-			callback:    commandExit,
-		},
+func getCommands() map[string]cliCommand {
+	return map[string]cliCommand{
 		"help": {
 			name:        "help",
 			description: "Show this help",
 			callback:    commandHelp,
 		},
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
+		},
 	}
-	command, exists := availableCommands[cmd]
-	if !exists {
-		return cliCommand{}, fmt.Errorf("Unknown command: %s", cmd)
-	}
-	return command, nil
 }
