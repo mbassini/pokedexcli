@@ -3,12 +3,17 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/mbassini/pokedexcli/internal/pokeapi"
+	"github.com/mbassini/pokedexcli/internal/pokecache"
 	"os"
 	"strings"
+	"time"
 )
 
 func startRepl() {
 	scanner := bufio.NewScanner(os.Stdin)
+	config := &pokeapi.Config{}
+	cache := pokecache.NewCache(10 * time.Second)
 	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
@@ -22,13 +27,11 @@ func startRepl() {
 		command, exists := getCommands()[inputCmd]
 		if !exists {
 			fmt.Println("Unknown command")
-			continue
 		} else {
-			err := command.callback()
+			err := command.callback(config)
 			if err != nil {
-				fmt.Println("Error executing command %s: %s", command, err)
+				fmt.Println(err)
 			}
-			continue
 		}
 	}
 }
@@ -42,11 +45,21 @@ func cleanInput(text string) []string {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*pokeapi.Config) error
 }
 
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
+		"map": {
+			name:        "map",
+			description: "Displays the names of 20 location areas in the Pokemon world",
+			callback:    commandMap,
+		},
+		"bmap": {
+			name:        "bmap",
+			description: "Displays the previous names of 20 location areas in the Pokemon world",
+			callback:    commandBMap,
+		},
 		"help": {
 			name:        "help",
 			description: "Show this help",
