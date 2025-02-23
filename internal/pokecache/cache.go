@@ -1,7 +1,6 @@
 package pokecache
 
 import (
-	"fmt"
 	"sync"
 	"time"
 )
@@ -49,7 +48,6 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 func (c *Cache) reapLoop() {
 	ticker := time.NewTicker(c.interval)
 	for range ticker.C {
-		fmt.Println("< DELETING CACHE ENTRIES >")
 		c.mutex.Lock()
 		for key, entry := range c.data {
 			if time.Since(entry.createdAt) > c.interval {

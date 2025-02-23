@@ -13,7 +13,7 @@ import (
 func startRepl() {
 	scanner := bufio.NewScanner(os.Stdin)
 	config := &pokeapi.Config{}
-	cache := pokecache.NewCache(10 * time.Second)
+	config.Cache = pokecache.NewCache(10 * time.Second)
 	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()

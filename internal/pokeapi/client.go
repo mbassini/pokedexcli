@@ -2,8 +2,9 @@ package pokeapi
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/mbassini/pokedexcli/internal/pokecache"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -24,29 +25,49 @@ type ApiResponse struct {
 type Config struct {
 	NextURL     *string
 	PreviousURL *string
+	Cache       *pokecache.Cache
 }
 
 func GetLocations(url string, config *Config) ([]Location, error) {
+	cached, found := config.Cache.Get(url)
+	if found {
+		response, err := unmarshalAndUpdateConfig(cached, config)
+		if err != nil {
+			return nil, err
+		}
+		return response.Results, nil
+	}
+
 	res, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	body, err := io.ReadAll(res.Body)
-	res.Body.Close()
+	defer res.Body.Close()
 	if res.StatusCode > 299 {
-		log.Fatalf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
+		return nil, fmt.Errorf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
 	}
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
+	config.Cache.Add(url, body)
+
+	response, err := unmarshalAndUpdateConfig(body, config)
+	if err != nil {
+		return nil, err
+	}
+
+	return response.Results, nil
+}
+
+func unmarshalAndUpdateConfig(data []byte, config *Config) (ApiResponse, error) {
 	var response ApiResponse
-	err = json.Unmarshal(body, &response)
+	err := json.Unmarshal(data, &response)
 	if err != nil {
-		log.Fatalf("Error unmarshalling response body: %s\n", err)
+		return ApiResponse{}, err
 	}
-
 	config.NextURL = response.Next
 	config.PreviousURL = response.Previous
-	return response.Results, nil
+	return response, nil
 }
