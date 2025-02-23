@@ -14,9 +14,9 @@ type cliCommand struct {
 }
 
 func main() {
+	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
-		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
 		input := scanner.Text()
 		if input == "" {
