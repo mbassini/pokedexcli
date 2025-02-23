@@ -11,14 +11,18 @@ type Pokemon struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`
 }
+
+type PokemonEncounter struct {
+	Pokemon Pokemon `json:"pokemon"`
+}
+
 type PokemonApiResponse struct {
-	ID                int       `json:"id"`
-	Location          Location  `json:"location"`
-	PokemonEncounters []Pokemon `json:"pokemon"`
+	ID                int                `json:"id"`
+	Location          Location           `json:"location"`
+	PokemonEncounters []PokemonEncounter `json:"pokemon_encounters"`
 }
 
 func GetPokemons(url string, config *Config) ([]Pokemon, error) {
-	fmt.Println("Hello Starting GeFetch")
 	cached, found := config.Cache.Get(url)
 	if found {
 		var response PokemonApiResponse
@@ -26,13 +30,17 @@ func GetPokemons(url string, config *Config) ([]Pokemon, error) {
 		if err != nil {
 			return nil, err
 		}
-		return response.PokemonEncounters, nil
+		var pokemons []Pokemon
+		for _, p := range response.PokemonEncounters {
+			pokemons = append(pokemons, p.Pokemon)
+		}
+		return pokemons, nil
 	}
-	fmt.Println("Hello Starting GeFetch")
 	res, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
+
 	body, err := io.ReadAll(res.Body)
 	defer res.Body.Close()
 	if res.StatusCode > 299 {
@@ -43,12 +51,15 @@ func GetPokemons(url string, config *Config) ([]Pokemon, error) {
 	}
 
 	config.Cache.Add(url, body)
-
 	var response PokemonApiResponse
-	err = json.Unmarshal(cached, &response)
+	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return nil, err
 	}
 
-	return response.PokemonEncounters, nil
+	var pokemons []Pokemon
+	for _, p := range response.PokemonEncounters {
+		pokemons = append(pokemons, p.Pokemon)
+	}
+	return pokemons, nil
 }
