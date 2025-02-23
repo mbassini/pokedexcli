@@ -3,9 +3,10 @@ package pokeapi
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mbassini/pokedexcli/internal/pokecache"
 	"io"
 	"net/http"
+
+	"github.com/mbassini/pokedexcli/internal/pokecache"
 )
 
 const BaseURL = "https://pokeapi.co/api/v2/location-area/"

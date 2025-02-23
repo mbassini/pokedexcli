@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/mbassini/pokedexcli/internal/pokeapi"
 	"os"
+
+	"github.com/mbassini/pokedexcli/internal/pokeapi"
 )
 
 func commandExit(config *pokeapi.Config) error {

@@ -3,11 +3,12 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/mbassini/pokedexcli/internal/pokeapi"
-	"github.com/mbassini/pokedexcli/internal/pokecache"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/mbassini/pokedexcli/internal/pokeapi"
+	"github.com/mbassini/pokedexcli/internal/pokecache"
 )
 
 func startRepl() {
