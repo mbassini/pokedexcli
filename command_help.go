@@ -6,7 +6,7 @@ import (
 	"github.com/mbassini/pokedexcli/internal/pokeapi"
 )
 
-func commandHelp(config *pokeapi.Config) error {
+func commandHelp(config *pokeapi.Config, arg string) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()

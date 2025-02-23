@@ -29,9 +29,16 @@ func startRepl() {
 		if !exists {
 			fmt.Println("Unknown command")
 		} else {
-			err := command.callback(config)
-			if err != nil {
-				fmt.Println(err)
+			if command.name == "explore" {
+				err := command.callback(config, words[1])
+				if err != nil {
+					fmt.Println(err)
+				}
+			} else {
+				err := command.callback(config, "")
+				if err != nil {
+					fmt.Println(err)
+				}
 			}
 		}
 	}
@@ -46,11 +53,16 @@ func cleanInput(text string) []string {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*pokeapi.Config) error
+	callback    func(*pokeapi.Config, string) error
 }
 
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
+		"explore": {
+			name:        "explore",
+			description: "Displays the Pokémon located in the area",
+			callback:    commandExplore,
+		},
 		"map": {
 			name:        "map",
 			description: "Displays the names of 20 location areas in the Pokemon world",

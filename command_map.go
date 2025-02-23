@@ -6,7 +6,7 @@ import (
 	"github.com/mbassini/pokedexcli/internal/pokeapi"
 )
 
-func commandMap(config *pokeapi.Config) error {
+func commandMap(config *pokeapi.Config, arg string) error {
 	url := pokeapi.BaseURL
 	if config.NextURL != nil {
 		url = *config.NextURL
@@ -21,7 +21,7 @@ func commandMap(config *pokeapi.Config) error {
 	return nil
 }
 
-func commandBMap(config *pokeapi.Config) error {
+func commandBMap(config *pokeapi.Config, arg string) error {
 	if config.PreviousURL == nil {
 		return fmt.Errorf("you're on the first page")
 	}
