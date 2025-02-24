@@ -32,12 +32,13 @@ func startRepl() {
 		if !exists {
 			fmt.Println("Unknown command")
 		} else {
-			if command.name == "explore" || command.name == "catch" {
+			switch command.name {
+			case "explore", "catch", "inspect":
 				err := command.callback(config, words[1])
 				if err != nil {
 					fmt.Println(err)
 				}
-			} else {
+			default:
 				err := command.callback(config, "")
 				if err != nil {
 					fmt.Println(err)
@@ -71,6 +72,11 @@ func getCommands() map[string]cliCommand {
 			description: "Displays the Pokémon located in the area",
 			callback:    commandExplore,
 		},
+		"inspect": {
+			name:        "inspect",
+			description: "Show details about a Pokémon",
+			callback:    commandInspect,
+		},
 		"map": {
 			name:        "map",
 			description: "Displays the names of 20 location areas in the Pokemon world",
@@ -80,6 +86,11 @@ func getCommands() map[string]cliCommand {
 			name:        "bmap",
 			description: "Displays the previous names of 20 location areas in the Pokemon world",
 			callback:    commandBMap,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Displays caught Pokémons",
+			callback:    commandPokedex,
 		},
 		"help": {
 			name:        "help",

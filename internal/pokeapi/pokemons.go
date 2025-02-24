@@ -66,8 +66,33 @@ func GetPokemons(url string, config *Config) ([]Pokemon, error) {
 }
 
 type PokemonDetails struct {
-	Name           string `json:"name"`
-	BaseExperience int    `json:"base_experience"`
+	BaseExperience int            `json:"base_experience"`
+	Height         int            `json:"height"`
+	Weight         int            `json:"weight"`
+	Name           string         `json:"name"`
+	Types          []PokemonType  `json:"types"`
+	Stats          []PokemonStats `json:"stats"`
+}
+
+type PokemonType struct {
+	Slot int                `json:"slot"`
+	Type PokemonTypeDetails `json:"type"`
+}
+
+type PokemonTypeDetails struct {
+	Name string `json:"name"`
+	Url  string `json:"url"`
+}
+
+type PokemonStats struct {
+	BaseStat int                 `json:"base_stat"`
+	Effort   int                 `json:"effort"`
+	Stat     PokemonStatsDetails `json:"stat"`
+}
+
+type PokemonStatsDetails struct {
+	Name string `json:"name"`
+	Url  string `json:"url"`
 }
 
 func TryToCatchPokemon(url string, config *Config) bool {
@@ -125,4 +150,12 @@ func getClass(experience int) string {
 		return "legendary"
 	}
 	return ""
+}
+
+func InspectPokemon(arg string, config *Config) (PokemonDetails, error) {
+	pokemon, found := config.Pokedex[arg]
+	if !found {
+		return PokemonDetails{}, fmt.Errorf("you have not caught that pokemon")
+	}
+	return pokemon, nil
 }

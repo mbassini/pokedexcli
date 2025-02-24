@@ -13,7 +13,7 @@ func commandCatch(config *pokeapi.Config, arg string) error {
 	}
 
 	url := pokeapi.BaseURL + "pokemon/" + arg
-	fmt.Printf("Throwing a pockebal at %s...\n", arg)
+	fmt.Printf("Throwing a Pokeball at %s...\n", arg)
 	caught := pokeapi.TryToCatchPokemon(url, config)
 	if !caught {
 		fmt.Printf("%s escaped!\n", arg)
