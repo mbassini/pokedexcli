@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
@@ -15,6 +16,7 @@ func startRepl() {
 	scanner := bufio.NewScanner(os.Stdin)
 	config := &pokeapi.Config{}
 	config.Cache = pokecache.NewCache(10 * time.Second)
+	rand.Seed(time.Now().UnixNano())
 	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
@@ -29,7 +31,7 @@ func startRepl() {
 		if !exists {
 			fmt.Println("Unknown command")
 		} else {
-			if command.name == "explore" {
+			if command.name == "explore" || command.name == "catch" {
 				err := command.callback(config, words[1])
 				if err != nil {
 					fmt.Println(err)
@@ -58,6 +60,11 @@ type cliCommand struct {
 
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
+		"catch": {
+			name:        "catch",
+			description: "Try to catch a Pokémon",
+			callback:    commandCatch,
+		},
 		"explore": {
 			name:        "explore",
 			description: "Displays the Pokémon located in the area",

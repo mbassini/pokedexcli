@@ -7,7 +7,7 @@ import (
 )
 
 func commandMap(config *pokeapi.Config, arg string) error {
-	url := pokeapi.BaseURL
+	url := pokeapi.BaseURL + "location-area/"
 	if config.NextURL != nil {
 		url = *config.NextURL
 	}

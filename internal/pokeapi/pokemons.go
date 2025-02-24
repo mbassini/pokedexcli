@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 )
 
@@ -62,4 +63,63 @@ func GetPokemons(url string, config *Config) ([]Pokemon, error) {
 		pokemons = append(pokemons, p.Pokemon)
 	}
 	return pokemons, nil
+}
+
+type PokemonDetails struct {
+	Name           string `json:"name"`
+	BaseExperience int    `json:"base_experience"`
+}
+
+func TryToCatchPokemon(url string, config *Config) bool {
+	res, err := http.Get(url)
+	if err != nil {
+		return false
+	}
+
+	body, err := io.ReadAll(res.Body)
+	defer res.Body.Close()
+	if res.StatusCode > 299 {
+		return false
+	}
+	if err != nil {
+		return false
+	}
+
+	config.Cache.Add(url, body)
+	var response PokemonDetails
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return false
+	}
+
+	pokemonClass := getClass(response.BaseExperience)
+
+	fmt.Println(response.BaseExperience)
+	num := rand.Intn(100)
+	caught := false
+	switch pokemonClass {
+	case "weak":
+		caught = num <= 95
+	case "common":
+		caught = num <= 75
+	case "rare":
+		caught = num <= 40
+	case "legendary":
+		caught = num <= 15
+	}
+	return caught
+}
+
+func getClass(experience int) string {
+	switch true {
+	case experience <= 50:
+		return "weak"
+	case experience <= 100:
+		return "common"
+	case experience <= 200:
+		return "rare"
+	case experience <= 400:
+		return "legendary"
+	}
+	return ""
 }

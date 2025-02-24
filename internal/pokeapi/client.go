@@ -9,7 +9,7 @@ import (
 	"github.com/mbassini/pokedexcli/internal/pokecache"
 )
 
-const BaseURL = "https://pokeapi.co/api/v2/location-area/"
+const BaseURL = "https://pokeapi.co/api/v2/"
 
 type Location struct {
 	Name string `json:"name"`
