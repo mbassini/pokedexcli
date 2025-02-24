@@ -6,6 +6,12 @@ import (
 )
 
 func commandCatch(config *pokeapi.Config, arg string) error {
+	_, alreadyCaught := config.Pokedex[arg]
+	if alreadyCaught {
+		fmt.Printf("%s already caught!\n", arg)
+		return nil
+	}
+
 	url := pokeapi.BaseURL + "pokemon/" + arg
 	fmt.Printf("Throwing a pockebal at %s...\n", arg)
 	caught := pokeapi.TryToCatchPokemon(url, config)

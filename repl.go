@@ -16,6 +16,7 @@ func startRepl() {
 	scanner := bufio.NewScanner(os.Stdin)
 	config := &pokeapi.Config{}
 	config.Cache = pokecache.NewCache(10 * time.Second)
+	config.Pokedex = make(map[string]pokeapi.PokemonDetails)
 	rand.Seed(time.Now().UnixNano())
 	for {
 		fmt.Print("Pokedex > ")

@@ -86,15 +86,14 @@ func TryToCatchPokemon(url string, config *Config) bool {
 	}
 
 	config.Cache.Add(url, body)
-	var response PokemonDetails
-	err = json.Unmarshal(body, &response)
+	var pokemon PokemonDetails
+	err = json.Unmarshal(body, &pokemon)
 	if err != nil {
 		return false
 	}
 
-	pokemonClass := getClass(response.BaseExperience)
+	pokemonClass := getClass(pokemon.BaseExperience)
 
-	fmt.Println(response.BaseExperience)
 	num := rand.Intn(100)
 	caught := false
 	switch pokemonClass {
@@ -106,6 +105,10 @@ func TryToCatchPokemon(url string, config *Config) bool {
 		caught = num <= 40
 	case "legendary":
 		caught = num <= 15
+	}
+
+	if caught {
+		config.Pokedex[pokemon.Name] = pokemon
 	}
 	return caught
 }

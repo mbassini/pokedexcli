@@ -27,6 +27,7 @@ type Config struct {
 	NextURL     *string
 	PreviousURL *string
 	Cache       *pokecache.Cache
+	Pokedex     map[string]PokemonDetails
 }
 
 func GetLocations(url string, config *Config) ([]Location, error) {
